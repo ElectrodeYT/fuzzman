@@ -11,19 +11,22 @@ fuzzers = []
 
 
 class AFL:
-    def __init__(self, target_type, is_master, index_of_fuzzer_layout=0, custom_arguments=None):
+    def __init__(self, target_type, is_master, index_of_fuzzer_layout=0, custom_arguments=None, custom_ram_limit=None):
         self.__subprocess = None
         self.target_type = target_type
         self.is_master = is_master
         self.index_of_fuzzer_layout = index_of_fuzzer_layout
         self.custom_arguments = custom_arguments
+        self.custom_ram_limit = custom_ram_limit
         self.__name_of_fuzzer = f"{target_type}{'_master' if is_master else ''}{'_' if not is_master else ''}{'' if is_master else index_of_fuzzer_layout}"
 
     def start(self):
         print(f'Starting fuzzer {self.__name_of_fuzzer}')
         command = []
         command.append(config['fuzzer_configs']['afl']['executables']['afl-fuzz'])
-        if 'ram_limit' in config['fuzzer_configs']['afl']:
+        if self.custom_ram_limit is not None:
+            command.extend(['-m', str(self.custom_ram_limit)])
+        elif 'ram_limit' in config['fuzzer_configs']['afl']:
             command.extend(['-m', str(config['fuzzer_configs']['afl']['ram_limit'])])
         if self.is_master:
             command.extend(['-M', self.__name_of_fuzzer])
@@ -131,11 +134,15 @@ def main():
         if 'custom_arguments' not in fuzzer_layout:
             fuzzer_layout['custom_arguments'] = None
 
+        if 'ram_limit' not in fuzzer_layout:
+            fuzzer_layout['ram_limit'] = None
+
         for i in range(fuzzer_layout['count']):
             fuzzers.append(AFL(fuzzer_layout['target_type'],
                                fuzzer_layout['is_master'],
                                i + 1,
-                               fuzzer_layout['custom_arguments']))
+                               fuzzer_layout['custom_arguments'],
+                               fuzzer_layout['ram_limit']))
 
     assert defined_a_master_fuzzer
 
