@@ -125,8 +125,8 @@ def main():
         if 'is_master' in fuzzer_layout and fuzzer_layout['is_master']:
             assert fuzzer_layout['count'] == 1
             defined_a_master_fuzzer = True
-        elif 'master' not in fuzzer_layout:
-            fuzzer_layout['master'] = False
+        elif 'is_master' not in fuzzer_layout:
+            fuzzer_layout['is_master'] = False
 
         if 'custom_arguments' not in fuzzer_layout:
             fuzzer_layout['custom_arguments'] = None
