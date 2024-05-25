@@ -1,0 +1,23 @@
+# fuzzer_configs: configure fuzzer settings
+# for now only afl is supported
+fuzzer_configs:
+  afl:
+    executables:
+      afl-fuzz: 'afl-fuzz'
+    seeds: 'test-seeds'
+    output_folder: 'output'
+    ram_limit: 256
+    targets:
+      normal: ['test-targets/normal']
+
+# layout: define how many, of which kind and which fuzzer to use
+layout:
+  - fuzzer: afl
+    target_type: normal
+    is_master: true
+    count: 1
+    # custom_arguments: '' # arguments to add to the afl-fuzz command
+  - fuzzer: afl
+    target_type: normal
+    is_master: false
+    count: 3
