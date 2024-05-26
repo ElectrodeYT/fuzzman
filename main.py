@@ -25,7 +25,8 @@ class AFL:
         command = []
         command.append(config['fuzzer_configs']['afl']['executables']['afl-fuzz'])
         if self.custom_ram_limit is not None:
-            command.extend(['-m', str(self.custom_ram_limit)])
+            if self.custom_ram_limit != 0:
+                command.extend(['-m', str(self.custom_ram_limit)])
         elif 'ram_limit' in config['fuzzer_configs']['afl']:
             command.extend(['-m', str(config['fuzzer_configs']['afl']['ram_limit'])])
         if self.is_master:
